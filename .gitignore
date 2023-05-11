@@ -1,0 +1,18 @@
+# IDE files
+/.idea
+
+# Dependencies
+node_modules
+/client/.pnp
+/client/.pnp.js
+
+# Testing
+/client/coverage
+
+# Production
+/client/build
+
+# Miscellaneous
+/client/.DS_Store
+/client/.env*
+/server/*.log
