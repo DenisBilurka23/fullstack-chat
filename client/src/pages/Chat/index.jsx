@@ -1,13 +1,16 @@
-import { Box, Button } from '@mui/material'
-import { useDispatch, useSelector } from 'react-redux'
-import { increment } from '../../store/slices/usersSlice'
+import { Box } from '@mui/material'
+import { useDispatch } from 'react-redux'
 import { getUsers } from '../../store/thunks/usersThunk'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Contacts from '../../components/Contacts'
+import Messages from '../../components/Messages'
+import FindContactModal from '../../components/FindContactModal'
 
 const Chat = () => {
 	const dispatch = useDispatch()
-	const { users } = useSelector(state => state)
+	const [modalOpen, setModalOpen] = useState(false)
+
+	const handleToggleModal = () => setModalOpen(prev => !prev)
 
 	useEffect(() => {
 		dispatch(getUsers())
@@ -20,14 +23,15 @@ const Chat = () => {
 				flexGrow: 1,
 				m: '20px',
 				border: '1px solid rgb(38, 38, 38)',
-				background: '#000'
+				background: '#000',
+				maxWidth: '935px'
 			}}
 		>
-			<Box>
-				<Contacts />
+			<Box sx={{ display: 'flex', height: '100%' }}>
+				<Contacts handleToggleModal={handleToggleModal} />
+				<Messages handleToggleModal={handleToggleModal} />
 			</Box>
-			{/*{users.test}*/}
-			{/*<Button onClick={() => dispatch(increment())}>increase</Button>*/}
+			<FindContactModal open={modalOpen} onClose={handleToggleModal} />
 		</Box>
 	)
 }
