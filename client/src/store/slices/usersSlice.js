@@ -29,6 +29,7 @@ const usersSlice = createSlice({
 	initialState: {
 		users: mockUsers,
 		user: {
+			id: 1,
 			name: 'Jared',
 			rooms: mockUsers
 		},
