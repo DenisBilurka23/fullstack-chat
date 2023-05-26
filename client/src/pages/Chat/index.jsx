@@ -17,17 +17,17 @@ const Chat = () => {
 	}, [])
 
 	return (
-		<Box
-			sx={{
-				flexDirection: 'column',
-				flexGrow: 1,
-				m: '20px',
-				border: '1px solid rgb(38, 38, 38)',
-				background: '#000',
-				maxWidth: '935px'
-			}}
-		>
-			<Box sx={{ display: 'flex', height: '100%' }}>
+		<Box sx={{ background: '#121212' }} width="100%" display="flex" justifyContent="center">
+			<Box
+				sx={{
+					display: 'flex',
+					m: '20px',
+					border: '1px solid rgb(38, 38, 38)',
+					background: '#000',
+					width: '100%',
+					maxWidth: '935px'
+				}}
+			>
 				<Contacts handleToggleModal={handleToggleModal} />
 				<Messages handleToggleModal={handleToggleModal} />
 			</Box>

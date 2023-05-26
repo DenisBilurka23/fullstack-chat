@@ -14,5 +14,5 @@ node_modules
 
 # Miscellaneous
 /client/.DS_Store
-/client/.env*
 /server/*.log
+.env
