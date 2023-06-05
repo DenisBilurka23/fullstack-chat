@@ -1,7 +1,9 @@
 import { Popper, Typography, Fade, Paper, ClickAwayListener, ListItem, List } from '@mui/material'
 import { styled } from '@mui/system'
 import { navItems } from '../../utils/navigation-helpers'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { signOutThunk } from '../../store/thunks/authThunk'
+import { useDispatch } from 'react-redux'
 
 const PopperStyled = styled(Popper)({
 	position: 'absolute',
@@ -19,6 +21,19 @@ const PopperStyled = styled(Popper)({
 })
 
 const DropDown = ({ anchorEl, open, handleClickAway }) => {
+	const dispatch = useDispatch()
+	const navigate = useNavigate()
+	const handleItemClick = link => async e => {
+		if (link === '/sign-out') {
+			e.preventDefault()
+			dispatch(signOutThunk())
+			const resultAction = await dispatch(signOutThunk())
+			if (!resultAction.error) {
+				navigate('/sign-in')
+			}
+		}
+	}
+
 	return (
 		<ClickAwayListener onClickAway={handleClickAway}>
 			<PopperStyled open={open} anchorEl={anchorEl} placement="bottom-start" transition>
@@ -33,7 +48,7 @@ const DropDown = ({ anchorEl, open, handleClickAway }) => {
 										disableGutters
 										sx={{ padding: '8px 20px' }}
 									>
-										<Link to={link}>
+										<Link to={link} onClick={handleItemClick(link)}>
 											<Icon />
 											<Typography sx={{ padding: '5px 10px' }}>{title}</Typography>
 										</Link>

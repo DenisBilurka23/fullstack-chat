@@ -20,6 +20,7 @@ import CustomAvatar from '../CustomAvatar'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectChat } from '../../store/slices/usersSlice'
+import { getUsersThunk } from '../../store/thunks/usersThunk'
 
 const Modal = styled(Dialog)(({ theme }) => ({
 	'.MuiDialog-paper': {
@@ -54,10 +55,16 @@ const SelectedUser = styled(Box)({
 const FindContactModal = ({ onClose, open }) => {
 	const dispatch = useDispatch()
 	const [searchValue, setSearchValue] = useState('')
-	const { users, user, selectedChat } = useSelector(state => state.users)
+	const { users, selectedChat } = useSelector(state => state.users)
+	const authUser = useSelector(state => state.auth.user)
+	const excludedSelfUsers = useMemo(() => users?.filter(user => user._id !== authUser?._id), [users, authUser])
 	const [selectedContact, setSelectedContact] = useState(null)
-	const selectedUser = useMemo(() => user.rooms.find(({ id }) => id === selectedContact?.id), [selectedContact])
-	const handleContactClick = contact => () => setSelectedContact(prev => (prev?.id !== contact.id ? contact : null))
+	console.log('selectedContact: ', selectedContact)
+	// const selectedUser = useMemo(
+	// 	() => authUser?.rooms?.find(({ id }) => id === selectedContact?._id),
+	// 	[selectedContact]
+	// )
+	const handleContactClick = contact => () => setSelectedContact(prev => (prev?._id !== contact._id ? contact : null))
 
 	const handleChatSelect = chat => () => {
 		//TODO: Add check on existing room for user, create or fetch one depending on that
@@ -87,8 +94,8 @@ const FindContactModal = ({ onClose, open }) => {
 	const debouncedApiRequest = useMemo(
 		() =>
 			debounce(search => {
-				// Perform API request here with the debounced search value
-				console.log('Performing API request with search value:', search)
+				console.log('check')
+				dispatch(getUsersThunk(search))
 			}, 300),
 		[]
 	)
@@ -118,15 +125,15 @@ const FindContactModal = ({ onClose, open }) => {
 				<Typography fontWeight={700}>New message</Typography>
 				<Button onClick={handleChatSelect(selectedContact)}>Next</Button>
 			</DialogTitle>
-			<DialogContent sx={{ p: 0 }}>
+			<DialogContent sx={{ p: '0 0 16px 0' }}>
 				<Box pt="16px" display="flex" alignItems="center">
 					<Typography px="16px" fontSize={14} fontWeight={700}>
 						To:{' '}
 					</Typography>
-					{selectedUser?.name && (
+					{selectedContact && (
 						<SelectedUser onClick={handleUnselectContact}>
 							<Typography fontSize="14px" mr="10px">
-								{selectedUser.name}
+								{selectedContact.username}
 							</Typography>
 							<Close fontSize="14px" />
 						</SelectedUser>
@@ -144,10 +151,10 @@ const FindContactModal = ({ onClose, open }) => {
 					Suggested
 				</Typography>
 				<List sx={{ p: 0 }}>
-					{users.map(user => (
+					{excludedSelfUsers?.map(user => (
 						<ListItem
 							sx={{ p: 0, '&:hover': { background: '#3c3c3c' }, transition: 'ease background .2s' }}
-							key={user?.id}
+							key={user?._id}
 							disableGutters
 						>
 							<ListItemButton
@@ -157,14 +164,14 @@ const FindContactModal = ({ onClose, open }) => {
 								<Box display="flex">
 									<ListItemAvatar>
 										{!user?.img ? (
-											<Avatar sx={{ bgcolor: 'grey' }}>{user?.name[0]}</Avatar>
+											<Avatar sx={{ bgcolor: 'grey' }}>{user?.username[0]}</Avatar>
 										) : (
 											<CustomAvatar size="44px" src={user.img} />
 										)}
 									</ListItemAvatar>
-									<ListItemText primary={user?.name} />
+									<ListItemText primary={user?.username} />
 								</Box>
-								{selectedContact?.id === user?.id ? (
+								{selectedContact?._id === user?._id ? (
 									<CheckCircle sx={{ fontSize: '29px', color: 'rgb(0, 149, 246)' }} />
 								) : (
 									<Circle />

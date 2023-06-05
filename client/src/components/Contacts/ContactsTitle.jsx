@@ -6,7 +6,8 @@ import DropDown from '../DropDown'
 import { useRef, useState } from 'react'
 
 const ContactsTitle = ({ handleToggleModal }) => {
-	const name = useSelector(state => state.users.user.name)
+	const { user } = useSelector(state => state.auth)
+	console.log('user: ', user)
 	const dropdownButtonRef = useRef(null)
 
 	const [anchorEl, setAnchorEl] = useState(null)
@@ -42,7 +43,7 @@ const ContactsTitle = ({ handleToggleModal }) => {
 				<Menu />
 			</IconButton>
 			<Typography variant="h3" fontSize="18px" sx={{ cursor: 'pointer' }}>
-				{name}
+				{user?.username}
 			</Typography>
 			<IconButton sx={{ color: '#fff' }} onClick={handleToggleModal}>
 				<MailOutlineIcon />

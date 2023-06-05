@@ -9,6 +9,6 @@ export const navItems = [
 	{
 		title: 'Logout',
 		Icon: Logout,
-		link: '/sign-in'
+		link: '/sign-out'
 	}
 ]

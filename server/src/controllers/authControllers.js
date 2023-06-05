@@ -1,50 +1,48 @@
-import UserModel from '../schemas/userSchema.js'
-import { compareSync, hashSync } from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import { validationResult } from 'express-validator'
+import authServices from '../services/authServices.js'
+
+const auth = fn => async (req, res) => {
+	try {
+		const errors = validationResult(req)
+		if (!errors.isEmpty()) {
+			return res.status(400).json(errors)
+		}
+		const { username, password } = req.body
+		const data = await fn(username, password)
+		res.cookie('refreshToken', data.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+		res.json(data)
+	} catch (e) {
+		console.log('error: ', e)
+		res.status(400).send({ error: e.message })
+	}
+}
 
 const authController = {
-	async signUp(req, res) {
+	signUp: auth(authServices.signUp),
+	signIn: auth(authServices.signIn),
+	signOut: async (req, res) => {
+		const { refreshToken } = req.cookies
 		try {
-			const errors = validationResult(req)
-			if (!errors.isEmpty()) {
-				return res.status(400).json(errors)
-			}
-			const { username, password } = req.body
-			const foundUser = await UserModel.findOne({ username })
-			if (foundUser) {
-				return res.status(400).json({ message: 'user already created' })
-			}
-			const hashedPassword = hashSync(password, 7)
-			const user = new UserModel({ username, password: hashedPassword })
-			await user.save()
-		} catch (e) {
-			console.log('e: ', e)
-			res.sendStatus(500)
-		}
-	},
-	async signIn(req, res) {
-		try {
-			const errors = validationResult(req)
-			if (!errors.isEmpty()) {
-				return res.status(400).json(errors)
-			}
-			const invalidData = () => res.status(400).json({ message: 'username or password is not correct' })
-			const { username, password } = req.body
-			const foundUser = await UserModel.findOne({ username })
-			if (!foundUser) {
-				return invalidData()
-			}
-
-			const isPasswordValid = compareSync(password, foundUser.password)
-			if (!isPasswordValid) {
-				invalidData()
-			}
-			const accessToken = jwt.sign({ username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30d' })
-			res.json({ accessToken })
+			await authServices.signOut(refreshToken)
+			res.clearCookie('refreshToken')
+			res.sendStatus(204)
 		} catch (e) {
 			console.log('error: ', e)
 			res.sendStatus(500)
+		}
+	},
+	refresh: async (req, res) => {
+		const { refreshToken } = req.cookies
+		if (!refreshToken) {
+			return res.sendStatus(401)
+		}
+		try {
+			const data = await authServices.refresh(refreshToken)
+			console.log('data: ', data)
+			res.cookie('refreshToken', data.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+			res.json(data)
+		} catch (e) {
+			res.sendStatus(e === 401 ? e : 500)
 		}
 	}
 }

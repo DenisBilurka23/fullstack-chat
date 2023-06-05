@@ -1,3 +1,3 @@
-import axios from 'axios'
+import api from './index'
 
-export const fetchUsers = () => axios.get('https://jsonplaceholder.typicode.com/users/1/posts')
+export const getUsers = username => api.get(username ? `users/?username=${username}` : 'users')

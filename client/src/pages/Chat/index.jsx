@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useDispatch } from 'react-redux'
-import { getUsers } from '../../store/thunks/usersThunk'
+import { getUsersThunk } from '../../store/thunks/usersThunk'
 import { useEffect, useState } from 'react'
 import Contacts from '../../components/Contacts'
 import Messages from '../../components/Messages'
@@ -13,7 +13,7 @@ const Chat = () => {
 	const handleToggleModal = () => setModalOpen(prev => !prev)
 
 	useEffect(() => {
-		dispatch(getUsers())
+		dispatch(getUsersThunk())
 	}, [])
 
 	return (

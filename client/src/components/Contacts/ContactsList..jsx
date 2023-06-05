@@ -23,7 +23,16 @@ const ContactsList = () => {
 		dispatch(selectChat(chat.id === selectedChat?.id ? null : chat))
 	}
 	return (
-		<List>
+		<List
+			{...(!user?.rooms && {
+				sx: {
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					flexGrow: 1
+				}
+			})}
+		>
 			{user?.rooms?.map(({ name, id, img }) => (
 				<Contact
 					key={id}
@@ -39,6 +48,11 @@ const ContactsList = () => {
 					</ListItemButton>
 				</Contact>
 			))}
+			{!user?.rooms && (
+				<Typography textAlign="center" p="0 1rem" color="#A8A8A8">
+					You don&#39;t have any chats yet
+				</Typography>
+			)}
 		</List>
 	)
 }

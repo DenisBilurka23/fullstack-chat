@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import authController from '../controllers/authControllers.js'
 import { check } from 'express-validator'
+import authMiddleware from '../middlewares/authMiddleware.js'
 
 const authRouter = Router()
 
@@ -17,5 +18,7 @@ authRouter.post(
 	check(['username', 'password'], 'fields can not be blank').notEmpty(),
 	authController.signIn
 )
+authRouter.post('/sign-out', authMiddleware, authController.signOut)
+authRouter.get('/refresh', authController.refresh)
 
 export default authRouter

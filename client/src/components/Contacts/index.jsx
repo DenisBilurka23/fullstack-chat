@@ -9,7 +9,9 @@ const Contacts = ({ handleToggleModal }) => {
 				flexBasis: '30%',
 				boxSizing: 'border-box',
 				borderRight: '1px solid rgb(38, 38, 38)',
-				height: '100%'
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column'
 			}}
 		>
 			<ContactsTitle handleToggleModal={handleToggleModal} />
