@@ -1,7 +1,9 @@
 import { List, styled, Typography, ListItem, ListItemButton } from '@mui/material'
 import CustomAvatar from '../CustomAvatar'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectChat } from '../../store/slices/usersSlice'
+import { selectRoom } from '../../store/slices/roomSlice'
+import { getUsersByIdsThunk } from '../../store/thunks/usersThunk'
+import { useEffect } from 'react'
 
 const Contact = styled(ListItem)(({ background }) => ({
 	display: 'flex',
@@ -16,15 +18,28 @@ const Contact = styled(ListItem)(({ background }) => ({
 }))
 
 const ContactsList = () => {
-	const { selectedChat, user } = useSelector(state => state.users)
+	const { user } = useSelector(state => state.auth)
+	const { userChats } = useSelector(state => state.users)
+	const { selectedRoom } = useSelector(state => state.rooms)
 	const dispatch = useDispatch()
 
-	const selectChatHandler = chat => () => {
-		dispatch(selectChat(chat.id === selectedChat?.id ? null : chat))
+	const selectChatHandler = userId => () => {
+		if (selectedRoom?.recipientId === userId) {
+			return dispatch(selectRoom(null))
+		}
+		dispatch(selectRoom(user.rooms.find(({ recipientId }) => recipientId === userId)))
 	}
+
+	useEffect(() => {
+		if (user?.rooms) {
+			const parsedIds = user.rooms?.map(({ recipientId }) => recipientId)
+			dispatch(getUsersByIdsThunk(parsedIds))
+		}
+	}, [user?.rooms])
+
 	return (
 		<List
-			{...(!user?.rooms && {
+			{...(!user?.rooms?.length && {
 				sx: {
 					display: 'flex',
 					alignItems: 'center',
@@ -33,22 +48,22 @@ const ContactsList = () => {
 				}
 			})}
 		>
-			{user?.rooms?.map(({ name, id, img }) => (
+			{userChats?.map(({ username, id, img }) => (
 				<Contact
 					key={id}
 					disableGutters
-					background={selectedChat?.id === id ? '#262626' : null}
-					onClick={selectChatHandler({ id, name, img })}
+					background={selectedRoom?.recipientId === id ? '#262626' : null}
+					onClick={selectChatHandler(id)}
 				>
 					<ListItemButton sx={{ p: '8px 20px' }}>
-						<CustomAvatar src={img} />
+						<CustomAvatar src={img} name={username} />
 						<Typography size="18px" fontWeight={600}>
-							{name}
+							{username}
 						</Typography>
 					</ListItemButton>
 				</Contact>
 			))}
-			{!user?.rooms && (
+			{!user?.rooms?.length && (
 				<Typography textAlign="center" p="0 1rem" color="#A8A8A8">
 					You don&#39;t have any chats yet
 				</Typography>

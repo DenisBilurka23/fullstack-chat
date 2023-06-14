@@ -1,17 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getUsersThunk } from '../thunks/usersThunk'
+import { getUsersByIdsThunk, getUsersThunk } from '../thunks/usersThunk'
 
 const usersSlice = createSlice({
 	name: 'user',
 	initialState: {
 		users: null,
+		userChats: null,
 		loading: false,
-		error: null,
-		selectedChat: null,
-		test: 1
-	},
-	reducers: {
-		selectChat: (state, action) => void (state.selectedChat = action.payload)
+		error: null
 	},
 	extraReducers: builder => {
 		builder
@@ -26,8 +22,18 @@ const usersSlice = createSlice({
 				state.loading = false
 				state.error = action.payload
 			})
+			.addCase(getUsersByIdsThunk.pending, state => {
+				state.loading = true
+			})
+			.addCase(getUsersByIdsThunk.fulfilled, (state, action) => {
+				state.loading = false
+				state.userChats = action.payload
+			})
+			.addCase(getUsersByIdsThunk.rejected, (state, action) => {
+				state.loading = false
+				state.error = action.payload
+			})
 	}
 })
 
-export const { selectChat } = usersSlice.actions
 export default usersSlice.reducer

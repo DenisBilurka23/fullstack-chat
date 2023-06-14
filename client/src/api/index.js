@@ -17,6 +17,7 @@ api.interceptors.response.use(
 		const originalRequest = error.config
 		const checkStatus = error.response.status === 401 && originalRequest
 
+		console.log('originalRequest.isRetry: ', originalRequest.isRetry)
 		if (checkStatus && !originalRequest.isRetry) {
 			originalRequest.isRetry = true
 			try {
@@ -29,8 +30,8 @@ api.interceptors.response.use(
 		}
 
 		if (checkStatus && originalRequest.isRetry) {
-			localStorage.removeItem('token')
-			window.location.href = '/'
+			// localStorage.removeItem('token')
+			// window.location.href = '/'
 		}
 
 		throw error

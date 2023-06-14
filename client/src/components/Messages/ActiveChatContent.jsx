@@ -1,6 +1,8 @@
 import { Box, Button, TextField, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
+import { sendMessageThunk } from '../../store/thunks/roomThunk'
+import { useDispatch } from 'react-redux'
 
 const Message = styled(Typography)(({ own }) => ({
 	background: own ? '#262626' : 'none',
@@ -32,11 +34,14 @@ const Submit = styled(Button)({
 	borderRadius: '25px'
 })
 
-const ActiveChatContent = ({ user, messages }) => {
+const ActiveChatContent = ({ user, data }) => {
 	const [inputValue, setInputValue] = useState('')
+	const dispatch = useDispatch()
 	const handleInputChange = e => setInputValue(e.target.value)
 
+	console.log('data: ', data)
 	const submitMessageHandle = () => {
+		dispatch(sendMessageThunk({ roomId: data._id, sender: user.id, text: inputValue }))
 		console.log('message: ', inputValue)
 	}
 
@@ -49,7 +54,7 @@ const ActiveChatContent = ({ user, messages }) => {
 	return (
 		<Box onKeyDown={handleKeyDown} p="20px" display="flex" flexGrow={1} flexDirection="column">
 			<Box display="flex" flexDirection="column" flexGrow={1}>
-				{messages.map(({ id, sender, text }) => (
+				{data?.messages?.map(({ id, sender, text }) => (
 					<Message key={id} own={sender === user.id ? 1 : 0}>
 						{text}
 					</Message>

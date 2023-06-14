@@ -38,7 +38,7 @@ const AuthForm = ({ type, username, setUsername, password, setPassword, onSubmit
 	const dispatch = useDispatch()
 
 	const parsedErrors = useMemo(() => {
-		if (error) {
+		if (error && typeof error !== 'string') {
 			console.log('error: ', error)
 			return 'errors' in error ? error.errors.map(({ msg }) => msg) : [error.error]
 		}

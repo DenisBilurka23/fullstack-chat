@@ -3,7 +3,13 @@ import { Schema, model } from 'mongoose'
 const userSchema = new Schema({
 	username: { type: String, required: true, minLength: 5, maxLength: 30, unique: true },
 	password: { type: String, required: true },
-	rooms: { type: [String], ref: 'Room' },
+	rooms: [
+		{
+			roomId: { type: Schema.Types.ObjectId, ref: 'Room' },
+			recipientId: { type: Schema.Types.ObjectId }
+		},
+		{ _id: false }
+	],
 	createdAt: { type: Number, default: () => Date.now() },
 	updatedAt: { type: Number, default: () => Date.now() }
 })

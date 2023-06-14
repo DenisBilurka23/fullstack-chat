@@ -1,5 +1,6 @@
 export const userDto = data => ({
-	id: data.userId,
+	id: data._id,
 	username: data.username,
-	token: data.accessToken
+	token: data.accessToken,
+	rooms: data.rooms
 })

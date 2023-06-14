@@ -7,7 +7,6 @@ import { useRef, useState } from 'react'
 
 const ContactsTitle = ({ handleToggleModal }) => {
 	const { user } = useSelector(state => state.auth)
-	console.log('user: ', user)
 	const dropdownButtonRef = useRef(null)
 
 	const [anchorEl, setAnchorEl] = useState(null)

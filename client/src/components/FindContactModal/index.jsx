@@ -19,14 +19,16 @@ import { Close, CheckCircle } from '@mui/icons-material'
 import CustomAvatar from '../CustomAvatar'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectChat } from '../../store/slices/usersSlice'
+import { selectRoom } from '../../store/slices/roomSlice'
 import { getUsersThunk } from '../../store/thunks/usersThunk'
+import { createRoomThunk } from '../../store/thunks/roomThunk'
+import Loader from '../Loader'
+import { refreshThunk } from '../../store/thunks/authThunk'
 
 const Modal = styled(Dialog)(({ theme }) => ({
 	'.MuiDialog-paper': {
 		backgroundColor: '#262626',
 		color: '#fff',
-		width: '250px',
 		borderRadius: '20px',
 		[theme.breakpoints.up(750)]: {
 			width: '400px'
@@ -55,25 +57,27 @@ const SelectedUser = styled(Box)({
 const FindContactModal = ({ onClose, open }) => {
 	const dispatch = useDispatch()
 	const [searchValue, setSearchValue] = useState('')
-	const { users, selectedChat } = useSelector(state => state.users)
+	const { users, loading } = useSelector(state => state.users)
 	const authUser = useSelector(state => state.auth.user)
-	const excludedSelfUsers = useMemo(() => users?.filter(user => user._id !== authUser?._id), [users, authUser])
+	const { selectedRoom } = useSelector(state => state.rooms)
+	const excludedSelfUsers = useMemo(() => users?.filter(user => user.id !== authUser?.id), [users, authUser])
 	const [selectedContact, setSelectedContact] = useState(null)
-	console.log('selectedContact: ', selectedContact)
-	// const selectedUser = useMemo(
-	// 	() => authUser?.rooms?.find(({ id }) => id === selectedContact?._id),
-	// 	[selectedContact]
-	// )
-	const handleContactClick = contact => () => setSelectedContact(prev => (prev?._id !== contact._id ? contact : null))
 
-	const handleChatSelect = chat => () => {
-		//TODO: Add check on existing room for user, create or fetch one depending on that
-		dispatch(selectChat(chat))
+	const handleContactClick = contact => () => setSelectedContact(prev => (prev?.id !== contact.id ? contact : null))
+	const handleChatSelect = user => async () => {
+		const foundRoom = authUser.rooms.find(room => room.recipientId === user.id)
+		if (foundRoom) {
+			dispatch(selectRoom(foundRoom))
+			return onClose()
+		}
+		const actionResult = await dispatch(createRoomThunk({ userId: authUser.id, recipientId: user.id }))
+		if (!actionResult.err) {
+			dispatch(refreshThunk())
+		}
 		onClose()
 	}
-
 	const closeModalHandler = () => {
-		setSelectedContact(selectedChat)
+		setSelectedContact(selectedRoom)
 		onClose()
 	}
 
@@ -94,7 +98,6 @@ const FindContactModal = ({ onClose, open }) => {
 	const debouncedApiRequest = useMemo(
 		() =>
 			debounce(search => {
-				console.log('check')
 				dispatch(getUsersThunk(search))
 			}, 300),
 		[]
@@ -104,9 +107,12 @@ const FindContactModal = ({ onClose, open }) => {
 		setSearchValue(e.target.value)
 		debouncedApiRequest(e.target.value)
 	}
+
 	useEffect(() => {
-		setSelectedContact(selectedChat)
-	}, [selectedChat])
+		if (open) {
+			dispatch(getUsersThunk())
+		}
+	}, [open])
 
 	return (
 		<Modal onClose={closeModalHandler} open={open}>
@@ -154,7 +160,7 @@ const FindContactModal = ({ onClose, open }) => {
 					{excludedSelfUsers?.map(user => (
 						<ListItem
 							sx={{ p: 0, '&:hover': { background: '#3c3c3c' }, transition: 'ease background .2s' }}
-							key={user?._id}
+							key={user?.id}
 							disableGutters
 						>
 							<ListItemButton
@@ -171,7 +177,7 @@ const FindContactModal = ({ onClose, open }) => {
 									</ListItemAvatar>
 									<ListItemText primary={user?.username} />
 								</Box>
-								{selectedContact?._id === user?._id ? (
+								{selectedContact?.id === user?.id ? (
 									<CheckCircle sx={{ fontSize: '29px', color: 'rgb(0, 149, 246)' }} />
 								) : (
 									<Circle />
@@ -181,6 +187,7 @@ const FindContactModal = ({ onClose, open }) => {
 					))}
 				</List>
 			</DialogContent>
+			{loading && <Loader />}
 		</Modal>
 	)
 }

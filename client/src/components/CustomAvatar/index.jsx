@@ -1,6 +1,6 @@
-import { Box } from '@mui/material'
+import { Avatar, Box } from '@mui/material'
 
-const CustomAvatar = ({ src, size }) => (
+const CustomAvatar = ({ src, size, name }) => (
 	<Box
 		sx={{
 			'& img': {
@@ -12,7 +12,11 @@ const CustomAvatar = ({ src, size }) => (
 			}
 		}}
 	>
-		<img src={src} alt='profile picture' />
+		{!src ? (
+			<Avatar sx={{ bgcolor: 'grey', marginRight: '12px' }}>{name[0]}</Avatar>
+		) : (
+			<img src={src} alt="profile picture" />
+		)}
 	</Box>
 )
 

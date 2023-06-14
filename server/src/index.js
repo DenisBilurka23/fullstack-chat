@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import authMiddleware from './middlewares/authMiddleware.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import roomRouter from './routes/roomRouter.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -22,6 +23,7 @@ app.use(
 )
 app.use('/auth', authRouter)
 app.use('/users', authMiddleware, userRouter)
+app.use('/rooms', authMiddleware, roomRouter)
 
 const startServer = async () => {
 	try {

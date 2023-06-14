@@ -55,8 +55,6 @@ const authServices = {
 		dbToken.username = updatedUserData.username
 		await dbToken.save()
 
-		console.log('updatedUserData: ', updatedUserData)
-
 		return {
 			...tokens,
 			_id: updatedUserData._id,

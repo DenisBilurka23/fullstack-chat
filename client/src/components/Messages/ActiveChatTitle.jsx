@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, Avatar } from '@mui/material'
+import { Box, Typography, IconButton } from '@mui/material'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import CustomAvatar from '../CustomAvatar'
 
@@ -15,13 +15,9 @@ const ActiveChatTitle = ({ recipient, toggleConfirmationModal }) => {
 			}}
 		>
 			<Box sx={{ display: 'flex', alignItems: 'center', px: '10px' }}>
-				{recipient.img ? (
-					<CustomAvatar size="30px" src={recipient.img} />
-				) : (
-					<Avatar sx={{ bgcolor: 'grey' }}>{recipient.name[0]}</Avatar>
-				)}
+				<CustomAvatar size="30px" src={recipient.img} name={recipient.username} />
 				<Typography size="18px" fontWeight={600}>
-					{recipient.name}
+					{recipient.username}
 				</Typography>
 			</Box>
 			<IconButton sx={{ color: '#fff' }} onClick={toggleConfirmationModal}>

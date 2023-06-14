@@ -38,10 +38,10 @@ const authController = {
 		}
 		try {
 			const data = await authServices.refresh(refreshToken)
-			console.log('data: ', data)
 			res.cookie('refreshToken', data.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
 			res.json(data)
 		} catch (e) {
+			console.log('error: ', e)
 			res.sendStatus(e === 401 ? e : 500)
 		}
 	}
