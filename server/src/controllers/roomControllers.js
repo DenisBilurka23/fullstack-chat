@@ -4,7 +4,8 @@ const roomControllers = {
 	async get(req, res) {
 		try {
 			const roomId = req.params.roomId
-			const room = await roomServices.get(roomId)
+			const { page, messagesPerPage } = req.query
+			const room = await roomServices.get(roomId, page, messagesPerPage)
 			res.json(room)
 		} catch (e) {
 			console.log('error: ', e)

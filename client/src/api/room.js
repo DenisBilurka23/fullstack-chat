@@ -1,6 +1,9 @@
 import api from './index'
 
-export const getRoom = roomId => api.get(`/rooms/${roomId}`)
+export const getRoom = ({ roomId, page, messagesPerPage }) => {
+	return api.get(`/rooms/${roomId}/?page=${page}&messagesPerPage=${messagesPerPage}`)
+}
+
 export const deleteRoom = ({ roomId, userId, recipientId }) => {
 	return api.delete(`/rooms/?roomId=${roomId}&userId=${userId}&recipientId=${recipientId}`)
 }

@@ -7,6 +7,8 @@ import authMiddleware from './middlewares/authMiddleware.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import roomRouter from './routes/roomRouter.js'
+import http from 'http'
+import { Server } from 'socket.io'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -25,10 +27,41 @@ app.use('/auth', authRouter)
 app.use('/users', authMiddleware, userRouter)
 app.use('/rooms', authMiddleware, roomRouter)
 
+const server = http.createServer(app)
+const io = new Server(server, {
+	cors: {
+		origin: 'http://localhost:3000'
+	}
+})
+
+let users = []
+
+io.on('connection', socket => {
+	console.log('A user connected')
+
+	socket.on('saveUser', userId => {
+		if (!users.some(user => user.userId === userId)) {
+			users = [...users, { userId, socketId: socket.id }]
+		}
+		io.emit('getUsers', users)
+	})
+
+	socket.on('sendMessage', (sender, recipientId, text) => {
+		const user = users.find(user => user.userId === recipientId)
+		socket.to(user?.socketId).emit('getMessage', { sender, text, createdAt: Date.now() })
+	})
+
+	socket.on('disconnect', () => {
+		users = users.filter(user => user.socketId !== socket.id)
+		io.emit('getUsers', users)
+		console.log('A user disconnected')
+	})
+})
+
 const startServer = async () => {
 	try {
 		await mongoose.connect(process.env.DB_ACCESS)
-		app.listen(PORT, () => {
+		server.listen(PORT, () => {
 			console.log(`Server started on port ${PORT}`)
 		})
 	} catch (e) {

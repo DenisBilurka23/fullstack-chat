@@ -7,10 +7,13 @@ const roomSlice = createSlice({
 		loading: false,
 		error: null,
 		selectedRoom: null,
-		roomData: null
+		totalPages: null,
+		messages: []
 	},
 	reducers: {
-		selectRoom: (state, action) => void (state.selectedRoom = action.payload)
+		selectRoom: (state, action) => void (state.selectedRoom = action.payload),
+		addMessage: (state, action) => void (state.messages = [...state.messages, action.payload]),
+		resetMessages: state => void (state.messages = [])
 	},
 	extraReducers: builder => {
 		builder
@@ -30,7 +33,8 @@ const roomSlice = createSlice({
 			})
 			.addCase(getRoomThunk.fulfilled, (state, action) => {
 				state.loading = false
-				state.roomData = action.payload
+				state.totalPages = action.payload.totalPages
+				state.messages = [...action.payload.messages, ...state.messages]
 			})
 			.addCase(getRoomThunk.rejected, (state, action) => {
 				state.loading = false
@@ -51,7 +55,7 @@ const roomSlice = createSlice({
 			})
 			.addCase(sendMessageThunk.fulfilled, (state, action) => {
 				state.loading = false
-				state.roomData = action.payload
+				state.messages = [...state.messages, action.payload]
 			})
 			.addCase(sendMessageThunk.rejected, (state, action) => {
 				state.loading = false
@@ -60,6 +64,6 @@ const roomSlice = createSlice({
 	}
 })
 
-export const { selectRoom } = roomSlice.actions
+export const { selectRoom, addMessage, resetMessages } = roomSlice.actions
 
 export default roomSlice.reducer

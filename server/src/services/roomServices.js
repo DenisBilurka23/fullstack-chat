@@ -1,10 +1,29 @@
 import UserModel from '../schemas/userSchema.js'
 import RoomModel from '../schemas/roomSchema.js'
+import { Types } from 'mongoose'
 
 const roomServices = {
-	async get(roomId) {
-		const room = await RoomModel.findById(roomId)
-		return room
+	async get(roomId, page = 1, messagesPerPage = 10) {
+		const skipCount = (+page - 1) * +messagesPerPage
+		const room = await RoomModel.findById(roomId).select({
+			messages: { $slice: [-(skipCount + +messagesPerPage), +messagesPerPage] }
+		})
+		const messageCount = await RoomModel.aggregate([
+			{ $match: { _id: Types.ObjectId.createFromHexString(roomId) } },
+			{
+				$project: {
+					messageCount: { $size: '$messages' }
+				}
+			}
+		])
+		const totalMessages = messageCount[0].messageCount
+
+		return {
+			messages: room.messages,
+			users: room.users,
+			totalMessages,
+			totalPages: Math.ceil(totalMessages / messagesPerPage)
+		}
 	},
 	async create(userId, recipientId) {
 		const user = await UserModel.findById(userId)
@@ -34,14 +53,13 @@ const roomServices = {
 		})
 	},
 	async sendMessage({ roomId, text, sender }) {
-		debugger
 		const room = await RoomModel.findById(roomId)
 		if (!room) {
 			throw 400
 		}
 		room.messages = [...room.messages, { sender, text }]
 		await room.save()
-		return room
+		return { sender, text, createdAt: Date.now() }
 	}
 }
 

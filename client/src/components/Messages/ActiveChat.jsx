@@ -3,13 +3,12 @@ import ActiveChatTitle from './ActiveChatTitle'
 import { useDispatch, useSelector } from 'react-redux'
 import ActiveChatContent from './ActiveChatContent'
 import ConfirmationModal from '../ConfirmModal'
-import { useEffect, useState } from 'react'
-import { deleteRoomThunk, getRoomThunk } from '../../store/thunks/roomThunk'
+import { useState } from 'react'
+import { deleteRoomThunk } from '../../store/thunks/roomThunk'
 import { refreshThunk } from '../../store/thunks/authThunk'
 
 const ActiveChat = ({ recipient, selectedRoom }) => {
 	const { user } = useSelector(state => state.auth)
-	const { roomData } = useSelector(state => state.rooms)
 	const [confirmationModalOpen, setConfirmationModalOpen] = useState(false)
 	const dispatch = useDispatch()
 
@@ -28,16 +27,10 @@ const ActiveChat = ({ recipient, selectedRoom }) => {
 
 	const toggleConfirmationModal = () => setConfirmationModalOpen(prev => !prev)
 
-	useEffect(() => {
-		if (selectedRoom) {
-			dispatch(getRoomThunk(selectedRoom.roomId))
-		}
-	}, [selectedRoom])
-
 	return (
 		<Box height="100%" display="flex" flexDirection="column">
 			<ActiveChatTitle toggleConfirmationModal={toggleConfirmationModal} recipient={recipient} />
-			<ActiveChatContent user={user} data={roomData} />
+			<ActiveChatContent user={user} recipientId={recipient.id} />
 			<ConfirmationModal
 				message="Are you sure you want to delete the chat? It will be deleted for both chat members"
 				onConfirm={handleConfirmChatDeletion}

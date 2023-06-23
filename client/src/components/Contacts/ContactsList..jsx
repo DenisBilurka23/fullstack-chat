@@ -19,7 +19,7 @@ const Contact = styled(ListItem)(({ background }) => ({
 
 const ContactsList = () => {
 	const { user } = useSelector(state => state.auth)
-	const { userChats } = useSelector(state => state.users)
+	const { userChats, usersOnline } = useSelector(state => state.users)
 	const { selectedRoom } = useSelector(state => state.rooms)
 	const dispatch = useDispatch()
 
@@ -29,6 +29,8 @@ const ContactsList = () => {
 		}
 		dispatch(selectRoom(user.rooms.find(({ recipientId }) => recipientId === userId)))
 	}
+
+	const checkOnline = (uOnline, u) => !!uOnline?.find(({ userId }) => userId === u)
 
 	useEffect(() => {
 		if (user?.rooms) {
@@ -56,7 +58,7 @@ const ContactsList = () => {
 					onClick={selectChatHandler(id)}
 				>
 					<ListItemButton sx={{ p: '8px 20px' }}>
-						<CustomAvatar src={img} name={username} />
+						<CustomAvatar src={img} name={username} online={checkOnline(usersOnline, id)} />
 						<Typography size="18px" fontWeight={600}>
 							{username}
 						</Typography>

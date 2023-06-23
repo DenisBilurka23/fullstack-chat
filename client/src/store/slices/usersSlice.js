@@ -7,7 +7,11 @@ const usersSlice = createSlice({
 		users: null,
 		userChats: null,
 		loading: false,
-		error: null
+		error: null,
+		usersOnline: null
+	},
+	reducers: {
+		setOnlineUsers: (state, action) => void (state.usersOnline = action.payload)
 	},
 	extraReducers: builder => {
 		builder
@@ -35,5 +39,7 @@ const usersSlice = createSlice({
 			})
 	}
 })
+
+export const { setOnlineUsers } = usersSlice.actions
 
 export default usersSlice.reducer
