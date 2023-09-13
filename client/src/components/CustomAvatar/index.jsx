@@ -6,8 +6,8 @@ const CustomAvatar = ({ src, size, name, online }) => (
 			position: 'relative',
 			'& img': {
 				marginRight: '12px',
-				width: size || '56px',
-				height: size || '56px',
+				width: size || '40px',
+				height: size || '40px',
 				objectFit: 'cover',
 				borderRadius: '50%'
 			},
@@ -26,7 +26,18 @@ const CustomAvatar = ({ src, size, name, online }) => (
 		}}
 	>
 		{!src ? (
-			<Avatar sx={{ bgcolor: 'grey', marginRight: '12px' }}>{name[0]}</Avatar>
+			<Avatar
+				sx={{
+					bgcolor: 'grey',
+					marginRight: '12px',
+					...(size && {
+						width: size,
+						height: size
+					})
+				}}
+			>
+				{name[0]}
+			</Avatar>
 		) : (
 			<img src={src} alt="profile picture" />
 		)}

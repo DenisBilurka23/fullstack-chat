@@ -7,6 +7,7 @@ import { refreshThunk } from './store/thunks/authThunk'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import PrivateRoutes from './components/PrivateRoutes'
+import Settings from './pages/Settings'
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -15,7 +16,7 @@ const router = createBrowserRouter(
 			<Route path="/sign-up" element={<SignUp />} />
 			<Route element={<PrivateRoutes />}>
 				<Route element={<Chat />} index />
-				<Route path="/settings" element={<Chat />} />
+				<Route path="/settings" element={<Settings />} />
 			</Route>
 		</>
 	)

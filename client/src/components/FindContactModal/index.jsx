@@ -65,7 +65,7 @@ const FindContactModal = ({ onClose, open }) => {
 
 	const handleContactClick = contact => () => setSelectedContact(prev => (prev?.id !== contact.id ? contact : null))
 	const handleChatSelect = user => async () => {
-		const foundRoom = authUser.rooms.find(room => room.recipientId === user.id)
+		const foundRoom = authUser.rooms?.find(room => room.recipientId === user.id)
 		if (foundRoom) {
 			dispatch(selectRoom(foundRoom))
 			return onClose()

@@ -20,13 +20,13 @@ export const SocketProvider = ({ children }) => {
 	}, [])
 
 	useEffect(() => {
-		if (user) {
+		if (user && socket) {
 			socket.emit('saveUser', user.id)
 			socket.on('getUsers', users => {
 				dispatch(setOnlineUsers(users))
 			})
 		}
-	}, [user])
+	}, [user, socket])
 
 	return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
 }
