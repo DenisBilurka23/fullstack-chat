@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { refresh, signIn, signOut, signUp } from '../../api/auth'
 import { userDto } from '../../utils/dtos'
+import { updateUser } from '../../api/users'
 
 export const signInThunk = createAsyncThunk('auth/signIn', async (payload, { rejectWithValue }) => {
 	try {
@@ -40,10 +41,21 @@ export const refreshThunk = createAsyncThunk('auth/refreshToken', async (_, { re
 		try {
 			const response = await refresh()
 			localStorage.setItem('token', response.data.accessToken)
+			console.log('response.data: ', response.data)
 			return userDto(response.data)
 		} catch (e) {
 			console.log('error: ', e)
 			return rejectWithValue(e.response.data)
 		}
+	}
+})
+
+export const updateUserThunk = createAsyncThunk('auth/updateUser', async ({ id, payload }, { rejectWithValue }) => {
+	try {
+		const response = await updateUser(id, payload)
+		return response.data
+	} catch (e) {
+		console.log('error: ', e)
+		return rejectWithValue(e.response.data)
 	}
 })

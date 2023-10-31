@@ -15,6 +15,16 @@ const userServices = {
 	async getById(id) {
 		const user = await UserSchema.findById(id)
 		return userDto(user)
+	},
+	async update(id, body) {
+		const user = await UserSchema.findById(id)
+		if (body.username) {
+			user.username = body.username
+		}
+		if (body.file) {
+			user.profilePicture = body.file.filename
+		}
+		return user.save()
 	}
 }
 

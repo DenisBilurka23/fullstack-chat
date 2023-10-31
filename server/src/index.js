@@ -9,14 +9,20 @@ import cors from 'cors'
 import roomRouter from './routes/roomRouter.js'
 import http from 'http'
 import { Server } from 'socket.io'
+import path from 'path'
+import url from 'url'
 
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 8000
 const bodyParserJson = express.json()
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+global.__basepath = __dirname
 
 dotenv.config()
 app.use(bodyParserJson)
 app.use(cookieParser())
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use(
 	cors({
 		credentials: true,

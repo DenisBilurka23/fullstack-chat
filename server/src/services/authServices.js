@@ -2,6 +2,7 @@ import UserModel from '../schemas/userSchema.js'
 import { compareSync, hashSync } from 'bcrypt'
 import { generateTokens, verifyToken } from '../helpers/token-helpers.js'
 import TokenModel from '../schemas/tokenSchema.js'
+import { transformImageFromName } from '../helpers/image-helper.js'
 
 const authServices = {
 	async signUp(username, password) {
@@ -37,7 +38,13 @@ const authServices = {
 
 		await userToken.save()
 
-		return { userId: user._id, username: user.username, ...tokens }
+		return {
+			_id: user._id,
+			rooms: user.rooms,
+			profilePicture: transformImageFromName(user.profilePicture),
+			username: user.username,
+			...tokens
+		}
 	},
 	async signOut(refreshToken) {
 		await TokenModel.deleteOne({ refreshToken })
@@ -54,6 +61,7 @@ const authServices = {
 		dbToken.refreshToken = tokens.refreshToken
 		dbToken.username = updatedUserData.username
 		await dbToken.save()
+		const profilePicture = transformImageFromName(updatedUserData.profilePicture)
 
 		return {
 			...tokens,
@@ -61,7 +69,8 @@ const authServices = {
 			username: updatedUserData.username,
 			rooms: updatedUserData.rooms,
 			createdAt: updatedUserData.createdAt,
-			updatedAt: updatedUserData.updatedAt
+			updatedAt: updatedUserData.updatedAt,
+			profilePicture
 		}
 	}
 }

@@ -52,7 +52,7 @@ const ActiveChatContent = ({ user, recipientId }) => {
 	const submitMessageHandle = async () => {
 		socket.emit('sendMessage', user.id, recipientId, inputValue)
 		await dispatch(sendMessageThunk({ roomId: selectedRoom.roomId, sender: user.id, text: inputValue }))
-		messageRef.current.scrollIntoView({ behavior: 'smooth' })
+		messageRef.current?.scrollIntoView({ behavior: 'smooth' })
 		setInputValue('')
 	}
 
@@ -96,7 +96,7 @@ const ActiveChatContent = ({ user, recipientId }) => {
 	useEffect(() => {
 		socket.on('getMessage', async message => {
 			await dispatch(addMessage(message))
-			messageRef.current.scrollIntoView({ behavior: 'smooth' })
+			messageRef?.current?.scrollIntoView({ behavior: 'smooth' })
 		})
 		messagesContainerRef.current?.addEventListener('scroll', scrollHandler)
 

@@ -30,6 +30,17 @@ const userControllers = {
 			console.log('error: ', e)
 			res.sendStatus(500)
 		}
+	},
+	async updateUser(req, res) {
+		try {
+			const userId = req.params.userId
+			const body = req.body
+			const data = await userServices.update(userId, { username: body.username, file: req.file })
+			res.json(data)
+		} catch (e) {
+			console.log('error: ', e)
+			res.status(400).json(e)
+		}
 	}
 }
 

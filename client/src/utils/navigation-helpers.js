@@ -1,6 +1,11 @@
-import { Settings, Logout } from '@mui/icons-material'
+import { Settings, Logout, Home } from '@mui/icons-material'
 
 export const navItems = [
+	{
+		title: 'Main',
+		Icon: Home,
+		link: '/'
+	},
 	{
 		title: 'Account settings',
 		Icon: Settings,
