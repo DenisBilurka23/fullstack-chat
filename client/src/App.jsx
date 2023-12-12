@@ -31,7 +31,6 @@ const App = () => {
 
 	return (
 		<Box sx={{ height: '100%', display: 'flex', justifyContent: 'center' }}>
-			{/*<RouterProvider router={router} />*/}
 			<RouterProvider router={router} />
 		</Box>
 	)

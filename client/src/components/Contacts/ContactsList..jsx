@@ -50,7 +50,7 @@ const ContactsList = () => {
 				}
 			})}
 		>
-			{userChats?.map(({ username, id, img }) => (
+			{userChats?.map(({ username, id, profilePicture }) => (
 				<Contact
 					key={id}
 					disableGutters
@@ -58,7 +58,7 @@ const ContactsList = () => {
 					onClick={selectChatHandler(id)}
 				>
 					<ListItemButton sx={{ p: '8px 20px' }}>
-						<CustomAvatar src={img} name={username} online={checkOnline(usersOnline, id)} />
+						<CustomAvatar src={profilePicture} name={username} online={checkOnline(usersOnline, id)} />
 						<Typography size="18px" fontWeight={600}>
 							{username}
 						</Typography>

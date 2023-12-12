@@ -50,8 +50,8 @@ const ActiveChatContent = ({ user, recipientId }) => {
 	const handleInputChange = e => setInputValue(e.target.value)
 
 	const submitMessageHandle = async () => {
-		socket.emit('sendMessage', user.id, recipientId, inputValue)
-		await dispatch(sendMessageThunk({ roomId: selectedRoom.roomId, sender: user.id, text: inputValue }))
+		socket.emit('sendMessage', user?.id, recipientId, inputValue)
+		await dispatch(sendMessageThunk({ roomId: selectedRoom.roomId, sender: user?.id, text: inputValue }))
 		messageRef.current?.scrollIntoView({ behavior: 'smooth' })
 		setInputValue('')
 	}
@@ -70,7 +70,6 @@ const ActiveChatContent = ({ user, recipientId }) => {
 	}
 
 	useEffect(() => {
-		console.log('here')
 		dispatch(resetMessages())
 	}, [selectedRoom.roomId])
 
@@ -113,20 +112,20 @@ const ActiveChatContent = ({ user, recipientId }) => {
 						ref={index === messages.length - 1 ? messageRef : null}
 						key={_id}
 						sx={{
-							alignSelf: sender === user.id ? 'flex-end' : 'flex-start',
+							alignSelf: sender === user?.id ? 'flex-end' : 'flex-start',
 							display: 'flex',
 							flexDirection: 'column'
 						}}
 					>
-						<Message own={sender === user.id ? 1 : 0}>{text}</Message>
+						<Message own={sender === user?.id ? 1 : 0}>{text}</Message>
 						{createdAt && (
 							<Typography
 								sx={{
 									margin: '4px 15px',
 									color: 'rgb(168, 168, 168)',
 									fontSize: '12px',
-									textAlign: sender === user.id ? 'end' : 'start',
-									alignSelf: sender === user.id ? 'flex-end' : 'flex-start'
+									textAlign: sender === user?.id ? 'end' : 'start',
+									alignSelf: sender === user?.id ? 'flex-end' : 'flex-start'
 								}}
 							>
 								{moment(createdAt).fromNow()}

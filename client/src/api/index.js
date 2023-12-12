@@ -30,8 +30,8 @@ api.interceptors.response.use(
 		}
 
 		if (checkStatus && originalRequest.isRetry) {
-			// localStorage.removeItem('token')
-			// window.location.href = '/'
+			localStorage.removeItem('token')
+			window.location.href = '/'
 		}
 
 		throw error

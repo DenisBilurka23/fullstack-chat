@@ -20,7 +20,7 @@ const ActiveChatTitle = ({ recipient, toggleConfirmationModal }) => {
 			}}
 		>
 			<Box sx={{ display: 'flex', alignItems: 'center', px: '10px' }}>
-				<CustomAvatar size="30px" src={recipient.img} name={recipient.username} />
+				<CustomAvatar size="30px" src={recipient.profilePicture} name={recipient.username} />
 				<Box>
 					<Typography fontWeight={600}>{recipient.username}</Typography>
 					{checkOnline(usersOnline, recipient.id) && (
